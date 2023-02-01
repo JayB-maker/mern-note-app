@@ -1,15 +1,16 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/usermodels");
+const asyncHandler = require("express-async-handler");
 
-const protected = async (res, req, next) => {
+const protected = asyncHandler(async (req, res, next) => {
   let token;
 
   if (
-    req.headers.authentication &&
-    req.headers.authentication.startsWith("Bearer")
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
   ) {
     try {
-      token = req.headers.authentication.split(" ")[1];
+      token = req.headers.authorization.split(" ")[1];
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -19,13 +20,14 @@ const protected = async (res, req, next) => {
     } catch (error) {
       console.log(error);
       res.status(400);
-      res.json("unauthorized user");
+      throw new Error('Unauthorized user')
     }
   }
   if (!token) {
     res.status(400);
-    res.json("unauthorized user, no token");
+    throw new Error('Unauthorized user, no token')
+    }
   }
-};
+);
 
 module.exports = { protected };
