@@ -2,9 +2,9 @@ const noteModel = require("../models/noteModels");
 const asyncHandler = require("express-async-handler");
 
 const getNotes = asyncHandler(async (req, res) => {
-  const notes = await noteModel.find();
+  const notes = await noteModel.find({ user: req.user.id });
   res.status(200);
-  res.json({ notes });
+  res.json( notes );
 });
 
 const createNote = asyncHandler(async (req, res) => {
@@ -16,10 +16,10 @@ const createNote = asyncHandler(async (req, res) => {
   const newNote = await noteModel.create({
     note: note,
     details: details,
-    // user: req.user.id
+    user: req.user.id
   });
   res.status(200);
-  res.json({ newNote });
+  res.json(newNote);
 });
 
 const updateNote = asyncHandler(async (req, res) => {
@@ -38,7 +38,7 @@ const updateNote = asyncHandler(async (req, res) => {
     { new: true }
   );
   res.status(200);
-  res.json({ updatedNote });
+  res.json(updatedNote);
 });
 
 const deleteNote = asyncHandler(async (req, res) => {
